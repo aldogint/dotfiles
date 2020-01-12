@@ -1,0 +1,78 @@
+set nocompatible 
+filetype off
+
+" ---- Plugin --------------------------------------------------------
+"
+" init vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+
+" --- coding
+Plugin 'neoclide/coc.nvim'
+Plugin 'junegunn/fzf.vim'
+
+" --- looks
+Plugin 'morhetz/gruvbox'
+
+" --- windows
+Plugin 'vim-airline/vim-airline'
+Plugin 'scrooloose/nerdtree'
+
+call vundle#end()
+filetype plugin indent on
+
+" ---- General Settings ---------------------------------------------
+
+" Display indentation guides
+set list listchars=tab:\│\ ,trail:·,extends:»,precedes:«,nbsp:x
+
+" Tab length
+set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
+
+" Color scheme
+colorscheme gruvbox
+set background=dark
+
+" Display line number
+set nu
+
+set rtp+=~/.fzf
+set splitbelow
+set cursorline
+
+
+" ---- Plugin Specific Configs --------------------------------------
+"
+" --- neoclide/coc.nvim
+" use <tab> for trigger completion and navigate to the next complete item
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <Tab>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<Tab>" :
+      \ coc#refresh()
+
+" autoformat during save
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" Use <cr> to confirm completion
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" --- scrooloose/nerdtree
+" To have NERDTree always open on startup
+" Then go to previous (last accessed) window.
+autocmd vimenter * NERDTree
+autocmd VimEnter * wincmd p
+" Open nerdtree when opening directory
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+" close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" --- junegunn/fzf.vim
+let $FZF_DEFAULT_COMMAND = "ag --hidden --ignore .git -g ''"
+nnoremap <c-p> :Files<CR>

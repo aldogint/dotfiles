@@ -1,0 +1,14 @@
+{
+    "suggest.noselect": true,
+    "languageserver":{
+        "golang": {
+            "command": "gopls",
+            "rootPatterns": ["service.yaml", "go.mod", "gopkg.toml", "main.go"],
+            "filetypes": ["go"],
+            "initializationOptions": {
+                "completeUnimported": true
+            }
+        }
+    }
+}
+

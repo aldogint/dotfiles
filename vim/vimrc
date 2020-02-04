@@ -11,6 +11,8 @@ Plugin 'VundleVim/Vundle.vim'
 " --- coding
 Plugin 'neoclide/coc.nvim'
 Plugin 'junegunn/fzf.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-commentary'
 
 " --- looks
 Plugin 'morhetz/gruvbox'
@@ -18,6 +20,9 @@ Plugin 'morhetz/gruvbox'
 " --- windows
 Plugin 'vim-airline/vim-airline'
 Plugin 'scrooloose/nerdtree'
+
+" --- behaviour
+Plugin 'qpkorr/vim-bufkill'
 
 call vundle#end()
 filetype plugin indent on
@@ -37,9 +42,34 @@ set background=dark
 " Display line number
 set nu
 
+" Highlight search matches
+set hlsearch
+
 set rtp+=~/.fzf
 set splitbelow
 set cursorline
+set term=screen-256color
+set hidden
+set relativenumber
+
+" gruvbox fzf color
+let g:fzf_colors = {
+      \ 'fg':      ['fg', 'GruvboxFg1'],
+      \ 'bg':      ['fg', 'GruvboxBg0'],
+      \ 'hl':      ['fg', 'GruvboxYellow'],
+      \ 'fg+':     ['fg', 'GruvboxFg1'],
+      \ 'bg+':     ['fg', 'GruvboxBg1'],
+      \ 'hl+':     ['fg', 'GruvboxYellow'],
+      \ 'info':    ['fg', 'GruvboxBlue'],
+      \ 'prompt':  ['fg', 'GruvboxFg4'],
+      \ 'pointer': ['fg', 'GruvboxBlue'],
+      \ 'marker':  ['fg', 'GruvboxOrange'],
+      \ 'spinner': ['fg', 'GruvboxYellow'],
+      \ 'header':  ['fg', 'GruvboxBg3']
+      \ }
+
+" --- https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
+
 
 
 " ---- Plugin Specific Configs --------------------------------------
@@ -62,6 +92,18 @@ autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeIm
 " Use <cr> to confirm completion
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" use <c-space> to trigger completion
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Show all diagnostics
+nnoremap <silent> <leader>ccd  :<c-u>CocList diagnostics<cr>
+
 " --- scrooloose/nerdtree
 " To have NERDTree always open on startup
 " Then go to previous (last accessed) window.
@@ -76,3 +118,15 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " --- junegunn/fzf.vim
 let $FZF_DEFAULT_COMMAND = "ag --hidden --ignore .git -g ''"
 nnoremap <c-p> :Files<CR>
+
+
+" --- vim-airline/vim-airline
+" Enable the list of buffers
+let g:airline#extensions#tabline#enabled = 1
+
+" Rogu
+" make sure `:echo has('terminal')` returns 1
+function! s:Rogu(args) abort
+  execute ':terminal rogu' a:args
+endfunction
+com! -nargs=? Rogu :execute s:Rogu(<q-args>)

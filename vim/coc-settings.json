@@ -8,6 +8,10 @@
             "initializationOptions": {
                 "completeUnimported": true
             }
+        },
+        "reason": {
+            "command": "reason-language-server",
+            "filetypes": ["reason"]
         }
     }
 }

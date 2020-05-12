@@ -13,6 +13,8 @@ Plugin 'neoclide/coc.nvim'
 Plugin 'junegunn/fzf.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-commentary'
+Plugin 'stephpy/vim-yaml'
+Plugin 'reasonml-editor/vim-reason-plus'
 
 " --- looks
 Plugin 'morhetz/gruvbox'
@@ -23,6 +25,18 @@ Plugin 'scrooloose/nerdtree'
 
 " --- behaviour
 Plugin 'qpkorr/vim-bufkill'
+
+" --- documentation tools
+" required by plantuml previewer
+Plugin 'tyru/open-browser.vim'
+Plugin 'weirongxu/plantuml-previewer.vim'
+
+" --- utils
+Plugin 'itchyny/calendar.vim'
+" Plugin 'HendrikPetertje/vimify'
+
+" tmux integration
+Plugin 'christoomey/vim-tmux-navigator'
 
 call vundle#end()
 filetype plugin indent on
@@ -68,8 +82,14 @@ let g:fzf_colors = {
       \ 'header':  ['fg', 'GruvboxBg3']
       \ }
 
-" --- https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
+" :BW or <c-w> to close buffer without closing window
+" TODO: this would ignore unwritten buffer and leaves it open while moving to
+" the next buffer. Need to catch the error and go back to previous buffer if
+" it happens
+:command BW bn|bd#
+noremap <c-w> :BW<CR>
 
+" noremap bw execute bn|bd#
 
 
 " ---- Plugin Specific Configs --------------------------------------
@@ -104,6 +124,17 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Show all diagnostics
 nnoremap <silent> <leader>ccd  :<c-u>CocList diagnostics<cr>
 
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+        else
+            call CocAction('doHover')
+              endif
+              endfunction
+
 " --- scrooloose/nerdtree
 " To have NERDTree always open on startup
 " Then go to previous (last accessed) window.
@@ -118,6 +149,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " --- junegunn/fzf.vim
 let $FZF_DEFAULT_COMMAND = "ag --hidden --ignore .git -g ''"
 nnoremap <c-p> :Files<CR>
+nnoremap <c-l> :Buffers<CR>
 
 
 " --- vim-airline/vim-airline

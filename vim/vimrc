@@ -30,6 +30,7 @@ Plugin 'qpkorr/vim-bufkill'
 " required by plantuml previewer
 Plugin 'tyru/open-browser.vim'
 Plugin 'weirongxu/plantuml-previewer.vim'
+Plugin 'iamcco/markdown-preview.nvim'
 
 " --- utils
 Plugin 'itchyny/calendar.vim'
@@ -107,7 +108,13 @@ inoremap <silent><expr> <Tab>
       \ coc#refresh()
 
 " autoformat during save
-autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+" autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+function! s:on_save()
+    :call CocAction('runCommand', 'editor.action.organizeImport')
+    :call CocAction('format')
+endfunction
+autocmd BufWritePre *.go :call <SID>on_save()
+
 
 " Use <cr> to confirm completion
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -128,12 +135,12 @@ nnoremap <silent> <leader>ccd  :<c-u>CocList diagnostics<cr>
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-        else
-            call CocAction('doHover')
-              endif
-              endfunction
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+    else
+      call CocAction('doHover')
+    endif
+endfunction
 
 " --- scrooloose/nerdtree
 " To have NERDTree always open on startup
@@ -149,8 +156,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " --- junegunn/fzf.vim
 let $FZF_DEFAULT_COMMAND = "ag --hidden --ignore .git -g ''"
 nnoremap <c-p> :Files<CR>
-nnoremap <c-l> :Buffers<CR>
-
+nnoremap <c-i> :Buffers<CR>
 
 " --- vim-airline/vim-airline
 " Enable the list of buffers
@@ -162,3 +168,6 @@ function! s:Rogu(args) abort
   execute ':terminal rogu' a:args
 endfunction
 com! -nargs=? Rogu :execute s:Rogu(<q-args>)
+
+" iamcco/markdown-preview.nvim
+let g:mkdp_path_chrome = "google-chrome"
